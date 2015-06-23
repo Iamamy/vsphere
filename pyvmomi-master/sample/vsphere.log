@@ -1,0 +1,6 @@
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTPS connection (1): vm.splunk.io
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTPS connection (1): vm.splunk.io
+INFO:root:operation list is not supported
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTPS connection (1): vm.splunk.io
+INFO:root:operation list is not supported
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTPS connection (1): vm.splunk.io
