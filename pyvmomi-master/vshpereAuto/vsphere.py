@@ -41,6 +41,7 @@ class vsphere():
         for citem in vmFolderList:
             if type(citem) == pyVmomi.types.vim.VirtualApp and citem.name == vappname:
                 for cvm in citem.vm:
+                    logging.info("create snapshot %s for vm %s"%(snapname, cvm.summary.config.name))
                     cvm.CreateSnapshot_Task(name=snapname, memory=False, quiesce=False)
 
         return None
@@ -61,7 +62,8 @@ class vsphere():
         if snap.name == snapname:
             snap_obj = snap.snapshot
             snap_obj.RevertToSnapshot_Task(suppressPowerOn=False)
-            logging.info("revert snapshot to %s"%(snapname))
+            # logging.info("revert snapshot to %s"%(snapname))
+            return snap_obj
         elif len(snap.childSnapshotList)!=0:
             for child in snap.childSnapshotList:
                 self.revert_Snapshot(child, snapname)
@@ -74,7 +76,7 @@ class vsphere():
                 for cvm in citem.vm:
                     rootsnap = cvm.snapshot.rootSnapshotList
                     snap_obj = self.remove_Snapshot(rootsnap[0], snapname)
-                    if snap_obj is not None:
+                    if snap_obj is None:
                         logging.info("remove snapshot %s for vm %s"%(snapname, cvm.summary.config.name))
         return None
 
@@ -84,11 +86,12 @@ class vsphere():
         if snap.name == snapname:
             snap_obj = snap.snapshot
             snap_obj.RemoveSnapshot_Task(removeChildren=False)
+            return snap_obj
         elif (len(snap.childSnapshotList)!=0):
             for child in snap.childSnapshotList:
                 self.remove_Snapshot(child, snapname)
         else:
-            return None
+            return snap
 
     def start_operation(self):
         with open("params.yml", 'r') as stream:
@@ -119,7 +122,7 @@ class vsphere():
         elif operation == 'createsnapshot':
             self.createSnap_vapp(vmFolderList, vappname, snapname)
         elif operation == 'deletesnapshot':
-            self.createSnap_vapp(vmFolderList, vappname, snapname)
+            self.removeSnap_vapp(vmFolderList, vappname, snapname)
         else:
             logging.info("operation %s is not supported"%(operation))
 
