@@ -41,8 +41,11 @@ class vsphere():
         for citem in vmFolderList:
             if type(citem) == pyVmomi.types.vim.VirtualApp and citem.name == vappname:
                 for cvm in citem.vm:
-                    logging.info("create snapshot %s for vm %s"%(snapname, cvm.summary.config.name))
-                    cvm.CreateSnapshot_Task(name=snapname, memory=False, quiesce=False)
+                    try:
+                        cvm.CreateSnapshot_Task(name=snapname, memory=False, quiesce=False)
+                        logging.info("create snapshot %s for vm %s"%(snapname, cvm.summary.config.name))
+                    except:
+                        logging.info("create snapshot %s for vm %s is failed due to error"%(snapname, cvm.summary.config.name))
 
         return None
 
@@ -50,10 +53,12 @@ class vsphere():
         for citem in vmFolderList:
             if type(citem) == pyVmomi.types.vim.VirtualApp and citem.name == vappname:
                 for cvm in citem.vm:
-                    rootsnap = cvm.snapshot.rootSnapshotList
-                    snap_obj = self.revert_Snapshot(rootsnap[0], snapname)
-                    if snap_obj is not None:
+                    try:
+                        rootsnap = cvm.snapshot.rootSnapshotList
+                        snap_obj = self.revert_Snapshot(rootsnap[0], snapname)
                         logging.info("revert snapshot to %s for vm %s"%(snapname, cvm.summary.config.name))
+                    except:
+                        logging.info("revert snapshot to %s for vm %s is failed due to error"%(snapname, cvm.summary.config.name))
 
         return None
 
@@ -62,8 +67,6 @@ class vsphere():
         if snap.name == snapname:
             snap_obj = snap.snapshot
             snap_obj.RevertToSnapshot_Task(suppressPowerOn=False)
-            # logging.info("revert snapshot to %s"%(snapname))
-            return snap_obj
         elif len(snap.childSnapshotList)!=0:
             for child in snap.childSnapshotList:
                 self.revert_Snapshot(child, snapname)
@@ -74,10 +77,13 @@ class vsphere():
         for citem in vmFolderList:
             if type(citem) == pyVmomi.types.vim.VirtualApp and citem.name == vappname:
                 for cvm in citem.vm:
-                    rootsnap = cvm.snapshot.rootSnapshotList
-                    snap_obj = self.remove_Snapshot(rootsnap[0], snapname)
-                    if snap_obj is None:
+                    try:
+                        rootsnap = cvm.snapshot.rootSnapshotList
+                        snap_obj = self.remove_Snapshot(rootsnap[0], snapname)
                         logging.info("remove snapshot %s for vm %s"%(snapname, cvm.summary.config.name))
+                    except:
+                        logging.info("remove snapshot %s for vm %s is failed due to error"%(snapname, cvm.summary.config.name))
+
         return None
 
 
@@ -86,12 +92,11 @@ class vsphere():
         if snap.name == snapname:
             snap_obj = snap.snapshot
             snap_obj.RemoveSnapshot_Task(removeChildren=False)
-            return snap_obj
         elif (len(snap.childSnapshotList)!=0):
             for child in snap.childSnapshotList:
                 self.remove_Snapshot(child, snapname)
         else:
-            return snap
+            return None
 
     def start_operation(self):
         with open("params.yml", 'r') as stream:
