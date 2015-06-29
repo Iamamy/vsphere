@@ -60,6 +60,7 @@ def revert_Snapshot(snap, snapname):
     if snap.name == snapname:
         snap_obj = snap.snapshot
         snap_obj.RevertToSnapshot_Task(suppressPowerOn=False)
+        logging.info("revert snapshot to %s"%(snapname))
     elif (len(snap.childSnapshotList)!=0):
         for child in snap.childSnapshotList:
             revert_Snapshot(child, snapname)
@@ -82,7 +83,6 @@ def remove_Snapshot(snap, snapname):
     if snap.name == snapname:
         snap_obj = snap.snapshot
         snap_obj.RemoveSnapshot_Task(removeChildren=False)
-        print "remove snapshot"
     elif (len(snap.childSnapshotList)!=0):
         for child in snap.childSnapshotList:
             remove_Snapshot(child, snapname)
@@ -97,7 +97,7 @@ def main():
 
     operation = params['operation']
     vappname = params['vappname']
-    snapname = params['snapname']
+    snapname = str(params['snapname'])
 
     si = SmartConnect(
             host  = params['host'],
@@ -116,7 +116,7 @@ def main():
     if operation == 'list':
         getmyList(vmFolderList)
     elif operation == 'revert':
-        revertSnap_vapp(vmFolderList,vappname,snapname)
+        revertSnap_vapp(vmFolderList, vappname, snapname)
     elif operation == 'create':
         createSnap_vapp(vmFolderList, vappname, snapname)
     elif operation == 'remove':

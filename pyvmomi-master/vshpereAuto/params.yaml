@@ -1,7 +1,0 @@
-host: vm.splunk.io
-user: ali
-password: eatgood
-port: 443
-operation: list
-vappname:
-snapname:

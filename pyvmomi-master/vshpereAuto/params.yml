@@ -1,0 +1,7 @@
+host: vm.splunk.io
+operation: revertsnapshot
+password: eatgood
+port: '443'
+snapname: '20150410'
+user: ali
+vappname: vApp_migration_auto

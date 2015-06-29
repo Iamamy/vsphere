@@ -1,0 +1,61 @@
+{% extends "layout.html" %}
+
+{% block content %}
+  <h2>vShpere snapshot batch operation for vApp</h2>
+
+  {% for message in get_flashed_messages() %}
+    <div class="flash">{{ message }}</div>
+  {% endfor %}
+
+  <form action="{{ url_for('vspherepage') }}" method=post>
+    {{ form.hidden_tag() }}
+    <table class="mytable">
+        <tr>
+            <td> {{ form.operation.label }} </td>
+            <td> {{ form.operation() }} </td>
+        </tr>
+        <tr>
+            <td> {{ form.host.label }} </td>
+            <td> {{ form.host }} </td>
+        </tr>
+        <tr>
+            <td> {{ form.port.label }} </td>
+            <td> {{ form.port }} </td>
+        </tr>
+        <tr>
+            <td> {{ form.user.label }} </td>
+            <td> {{ form.user }} </td>
+        </tr>
+
+        <tr>
+            <td> {{ form.password.label }} </td>
+            <td> {{ form.password }} </td>
+        </tr>
+
+        <tr>
+            <td> {{ form.vappname.label }} </td>
+            <td> {{ form.vappname }} </td>
+        </tr>
+
+        <tr>
+            <td> {{ form.snapname.label }} </td>
+            <td> {{ form.snapname }} </td>
+        </tr>
+        <tr>
+            <td> </td>
+        </tr>
+        <tr>
+            <td> </td>
+        </tr>
+        <tr>
+            <td> {{ form.submit }} </td>
+        </tr>
+   </table>
+
+</form>
+
+
+{% endblock %}
+
+
+
